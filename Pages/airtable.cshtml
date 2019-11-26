@@ -1,0 +1,140 @@
+@page
+@model airtableModel
+
+@{
+    ViewData["Title"] = "Airtable Example";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>@Model.Mensaje</div>
+
+<!DOCTYPE html>
+ 
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width"/>
+        <title>Airtable</title>
+    </head>
+    <body>
+
+        <table id ="inttable" class="table" cellpadding="0" cellspacing="0">
+            <thead>
+                <th style="width:150px">Subject</th>
+                <th style="width:150px">Type</th>
+                <th style="width:150px">Contacts</th>
+                <th style="width:150px">When</th>
+                <th style="width:150px">Related Deals</th>
+                <th style="width:150px">Notes</th>
+                <th></th>
+            </thead>
+            <tbody>
+                @foreach(var interaction in Model.interactions)
+                {
+                    <tr>
+                        <td>@interaction.Subject</td>
+                        <td>@interaction.Type</td>
+                        <td>@interaction.Contacts</td>
+                        <td>@interaction.When</td>
+                        <td>@interaction.RelatedDeals</td>
+                        <td>@interaction.Notes</td>
+                        <td><input type="button" value="Remove" onclick="Remove(this)"/></td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+            <tr>
+                    <td><input type="text" id="txtSubject"/></td>
+                    <td><input type="text" id="txtType"/></td>
+                    <td><input type="text" id="txtContacts"/></td>
+                    <td><input type="date" id="txtWhen"/></td>
+                    <td><input type="text" id="txtRelatedDeals"/></td>
+                    <td><input type="text" id="txtNotes"/></td>
+                    <td><input type="button" id="btnAdd" value="Add"/></td>
+                </tr>
+            </tfoot>
+           </table>
+        <br/>
+
+
+
+        @section Scripts {
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+            <script type="text/javascript" src="https://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+           <script type="text/javascript">
+            //Reference the Name and Country TextBoxes
+            $("body").on("click", "#btnAdd", function () {
+                var txtSubject = $("#txtSubject");
+                var txtType = $("#txtType");
+                var txtContacts = $("#txtContacts");
+                var txtDate = $("#txtWhen");
+                var txtRelateddeals = $("#txtRelatedDeals");
+                var txtNotes = $("#txtNotes");
+
+                //Get the reference of the Table's TBODY element.
+
+                var tbody = $("#inttable > TBODY") [0];
+
+                //ADD ROW
+                var row = tbody.insertRow(-1);
+
+                //add  cells
+                var cell = $(row.insertCell(-1));
+                cell.html(txtSubject.val());
+
+                var cell = $(row.insertCell(-1));
+                cell.html(txtType.val());
+
+                var cell = $(row.insertCell(-1));
+                cell.html(txtContacts.val());
+
+                var cell = $(row.insertCell(-1));
+                cell.html(txtDate.val());
+
+                var cell = $(row.insertCell(-1));
+                cell.html(txtRelateddeals.val());
+
+                var cell = $(row.insertCell(-1));
+                cell.html(txtNotes.val());
+                
+                //add cell button
+
+                var cell = $(row.insertCell(-1));
+                var btnRemove = $("<input />");
+                btnRemove.attr("type", "button");
+                btnRemove.attr("onclick", "Remove(this);");
+                btnRemove.val("Remove");
+                cell.append(btnRemove);
+
+                //clear textboxes
+
+                txtSubject.val("");
+                txtType.val("");
+                txtContacts.val("");
+                txtDate.val("");
+                txtRelateddeals.val("");
+                txtNotes.val("");
+
+            });
+
+            function Remove(button) {
+            //Determine the reference of the Row using the Button.
+            var row = $(button).closest("TR");
+            var name = $("TD", row).eq(0).html();
+            if (confirm("Do you want to delete: " + name)) {
+                //Get the reference of the Table.
+                var table = $("#inttable")[0];
+ 
+                //Delete the Table row using it's Index.
+                table.deleteRow(row[0].rowIndex);
+            }
+            
+            };
+
+            </script>
+        }
+        
+
+        
+    </body>
+</html>

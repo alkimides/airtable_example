@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CONSUMING REST</title>
+    <!--Compiled and minified CSS-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+</head>
+<body>
+    
+    <div class="container">
+        <div class="section">
+            <!--aqui meten los usuarios el valor que quieren calcular-->
+            <input type="number" id="txtValue">
+            <!--diferentes botones, cada uno para calcular divisas distintas-->
+            <button class="btn blue" id="btnEur">EUR</button>
+            <button class="btn red" id="btnUsd">USD</button>
+            <button class="btn green" id="btnCad">CAD</button>
+            <button class="btn yellow" id="btnMxn">MXN</button>
+            <button class="btn grey" id="btnGbp">GBP</button>
+        </div>
+        <div class="section">
+            <ul id="resultado">
+                <!--aqui mostramos el resultado de cada moneda-->
+                <p>Resultado en USD</p><p id="resUSD">  </p>
+                <p>Resultado en CAD</p><p id="resCAD">  </p>
+                <p>Resultado en MXN</p><p id="resMXN">  </p>
+                <p>Resultado en GBP</p><p id="resGBP">  </p>
+                <p>Resultado en EUR</p><p id="resEUR">  </p>
+
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        //hacemos mediante queryselector para poder elegir diferentes divisas sin tener que copiar otra vez toda la funcion. 
+        //Asi llamamos a la misma funcion, simplemente pasandole un valor distinto
+    document.querySelector('#btnEur').addEventListener('click', function(){
+        obtenerDatos('EUR');
+    });
+    document.querySelector('#btnCad').addEventListener('click', function(){
+        obtenerDatos('CAD');
+    });
+    document.querySelector('#btnMxn').addEventListener('click', function(){
+        obtenerDatos('MXN');
+    });
+    document.querySelector('#btnGbp').addEventListener('click', function(){
+        obtenerDatos('GBP');
+    });
+    document.querySelector('#btnUsd').addEventListener('click', function(){
+        obtenerDatos('USD');
+    });
+
+    function obtenerDatos(value){
+    //al final de la url ponemos en ${} la variable valor, que sera la que el usuario elija depende que boton pulse. 
+    //Cada boton lleva a un valor distinto
+    let url = `https://api.exchangeratesapi.io/latest?base=${value}`;
+
+    //consultamos ajax
+
+    const api = new XMLHttpRequest();
+
+    //abrimos con el metodo get pasando la variable de la url. True = asincrono
+    
+    //retornamos funcion
+    api.onreadystatechange = function(){
+        if(this.status == 200 && this.readyState == 4){
+            
+  
+            //limpiamos
+            document.getElementById("resUSD").innerHTML = "";
+            document.getElementById("resCAD").innerHTML = "";
+            document.getElementById("resMXN").innerHTML = "";
+            document.getElementById("resGBP").innerHTML = "";
+            document.getElementById("resEUR").innerHTML = "";
+            //declaramos datos como JSON
+            let datos = JSON.parse(this.responseText);
+            //Calculamos lo que el usuario mete en el input tipo number por los datos del JSON del Banco Central Europeo
+            document.getElementById("resUSD").innerHTML = datos.rates.USD * (document.getElementById("txtValue").value) + "<br>";
+            document.getElementById("resCAD").innerHTML = datos.rates.CAD * (document.getElementById("txtValue").value) + "<br>";
+            document.getElementById("resMXN").innerHTML = datos.rates.MXN * (document.getElementById("txtValue").value) + "<br>";
+            document.getElementById("resGBP").innerHTML = datos.rates.GBP * (document.getElementById("txtValue").value) + "<br>";
+            document.getElementById("resEUR").innerHTML = datos.rates.EUR * (document.getElementById("txtValue").value) + "<br>";
+          
+
+        }
+
+    }
+    //abrimos conexion, le pasamos la url con el metodo GET. El true significa que va a ser asincrono.
+    api.open('GET', url, true);
+    api.send();
+}
+
+    </script>
+</body>
+</html>
